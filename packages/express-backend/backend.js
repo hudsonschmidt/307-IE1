@@ -9,22 +9,29 @@ app.get("/", (req, res) => {
     res.send("Hello World!");
 });
 
-const findUserByName = (name) => {
-    return users["users_list"].filter(
-        (user) => user["name"] === name
-    );
+const findUserByNameAndJob = (name, job) => {
+    return users["users_list"].filter(user => {
+        const nameMatches = name ? user["name"] === name : true;
+        const jobMatches = job ? user["job"] === job : true;
+        return nameMatches && jobMatches;
+    });
 };
 
 app.get("/users", (req, res) => {
     const name = req.query.name;
-    if (name != undefined) {
-        let result = findUserByName(name);
+    const job = req.query.job;
+
+    let result;
+    if (name || job) {
+        result = findUserByNameAndJob(name, job);
         result = { users_list: result };
-        res.send(result);
     } else {
-        res.send(users);
+        result = users;
     }
+
+    res.send(result);
 });
+
 
 const findUserById = (id) =>
     users["users_list"].find((user) => user["id"] === id);
