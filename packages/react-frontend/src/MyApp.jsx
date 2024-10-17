@@ -6,8 +6,25 @@ function MyApp() {
   const [characters, setCharacters] = useState([]);
 
   function removeOneCharacter(index) {
-    const updated = characters.filter((character, i) => i !== index);
-    setCharacters(updated);
+    const userToDelete = characters[index];
+    const userId = userToDelete.id;
+
+    fetch(`http://localhost:8000/users/${userId}`, { 
+      method: 'DELETE' 
+    })
+      .then(response => {
+        if (response.status === 204) {
+          const updated = characters.filter((character, i) => i !== index);
+          setCharacters(updated);
+        } else if (response.status === 404) {
+          console.error('Resource not found.');
+        } else {
+          console.error('Failed to delete user.');
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
   }
 
   function fetchUsers() {
@@ -33,8 +50,6 @@ function MyApp() {
         console.log(error);
       });
   }
-
-  
   
   function postUser(person) {
     const promise = fetch("http://localhost:8000/users", {
