@@ -19,15 +19,21 @@ function MyApp() {
     postUser(person)
       .then((response) => {
         if (response.status === 201) {
-          setCharacters([...characters, person]);
+          return response.json(); 
         } else {
           console.error("Failed to add user");
+        }
+      })
+      .then((newUser) => {
+        if (newUser) {
+          setCharacters([...characters, newUser]); 
         }
       })
       .catch((error) => {
         console.log(error);
       });
   }
+
   
   
   function postUser(person) {
